@@ -1,0 +1,43 @@
+{
+  "classification": {
+    "system_prompt": "You are a prompt classification assistant.\nClassify each prompt into exactly one category: descriptive (provides rich explanation or summary, no steps), instructive (teaches ‘how to’ via numbered steps), creative (story or imaginative text), comparative (compares two or more items), analytical (detailed reasoning or analysis), conversational (friendly, dialog-like recommendations).",
+    "examples": [
+      { "prompt": "Summarize photosynthesis.", "category": "descriptive" },
+      { "prompt": "How do I install Git?",    "category": "instructive" },
+      { "prompt": "Write a poem about winter.", "category": "creative" }
+    ],
+    "override_keywords": {
+      "descriptive": ["summariz"]
+    }
+  },
+  "strategies": {
+    "descriptive":  "cohesive narrative overview without bullet points or steps",
+    "instructive":  "zero-shot with clear step-by-step instructions",
+    "creative":     "few-shot narrative example in paragraph form of the query",
+    "comparative":  "chain-of-thought to weigh pros and cons",
+    "analytical":   "chain-of-thought focusing on detailed reasoning",
+    "conversational":"role prompting as a friendly assistant with examples",
+    "default":      "zero-shot with detailed outline"
+  },
+  "optimization": {
+    "base_system": "You are an expert PROMPT ENGINEER.\nApply this strategy to improve the prompt: {strategy}.\nDO NOT answer the prompt.\nProduce exactly one optimized prompt, without additional commentary.\nDO NOT use second-person pronouns or conversational phrasing; write in an impersonal, directive style.",
+    "extras": {
+      "descriptive": " Provide a cohesive narrative overview without bullet points or numbered steps.",
+      "creative":    " Provide a rich, imaginative narrative in paragraph form, suitable as the opening of a story."
+    }
+  },
+  "prompt_engineer": {
+    "model": "gpt-4-0125-preview",
+    "max_tokens": 1000,
+    "temperature": 0.7,
+    "api_key_env_var": "OPENAI_API_KEY",
+    "system_message": "You are a helpful assistant.",
+    "quit_instruction": "Type 'quit' or 'exit' to end the conversation",
+    "quit_commands": ["quit", "exit"],
+    "user_prompt": "Ask Prompt Engineer",
+    "assistant_name": "Prompt Engineer says",
+    "error_prefix": "Error",
+    "separator": "-",
+    "separator_length": 50
+  }
+}

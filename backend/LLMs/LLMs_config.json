@@ -1,0 +1,44 @@
+{
+  "claude": {
+    "model": "claude-opus-4-20250514",
+    "max_tokens": 100,
+    "temperature": 0.7,
+    "api_key_env_var": "ANTHROPIC_API_KEY",
+    "quit_instruction": "Type 'quit' or 'exit' to end the conversation",
+    "quit_commands": ["quit", "exit"],
+    "user_prompt": "Ask Claude",
+    "assistant_name": "Claude says",
+    "error_prefix": "Error",
+    "separator": "-",
+    "separator_length": 50
+  },
+  "gpt": {
+    "model": "gpt-4-0125-preview",
+    "max_tokens": 100,
+    "temperature": 0.7,
+    "api_key_env_var": "OPENAI_API_KEY",
+    "system_message": "You are a helpful assistant.",
+    "quit_instruction": "Type 'quit' or 'exit' to end the conversation",
+    "quit_commands": ["quit", "exit"],
+    "user_prompt": "Ask GPT",
+    "assistant_name": "GPT says",
+    "error_prefix": "Error",
+    "separator": "-",
+    "separator_length": 50
+  },
+  "gemini": {
+    "model": "gemini-2.0-flash-001",
+    "max_tokens": 100,
+    "temperature": 0.7,
+    "api_key_env_var": "GEMINI_API_KEY",
+    "quit_instruction": "Type 'exit' to quit",
+    "quit_commands": ["exit"],
+    "user_prompt": "Ask Gemini",
+    "assistant_name": "Gemini says",
+    "error_prefix": "ERROR",
+    "separator": "-",
+    "separator_length": 50
+  }
+}
+
+  
