@@ -1,8 +1,8 @@
 import os
 import json
 from dotenv import load_dotenv
-import openai
 from openai import OpenAI
+from .helper import *
 
 
 
@@ -13,11 +13,11 @@ load_dotenv()
 def load_config():
     """Load configuration parameters from JSON file"""
     try:
-        with open('LLMs_config.json', 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), 'LLMs_config.json'), 'r') as f:
             config = json.load(f)
             return config['gpt']
     except FileNotFoundError:
-        print("Error: parameters.json file not found!")
+        print("Error: LLMs_config.json file not found!")
         exit(1)
     except KeyError:
         print("Error: 'gpt' configuration not found in parameters.json!")
@@ -37,14 +37,14 @@ if not api_key:
 # Initialize OpenAI client
 client = OpenAI(api_key=api_key)
 
-def ask_gpt(prompt, model=None):
+def ask_gpt(prompt, format_response=True):
     """Send a prompt to GPT and return the response"""
-    if model is None:
-        model = config['model']
-    
+    if format_response:
+        prompt = format_prompt_for_dict(prompt, LLM_name='gpt')
+
     try:
         response = client.chat.completions.create(
-            model=model,
+            model=config['model'],
             messages=[
                 {"role": "system", "content": config['system_message']},
                 {"role": "user", "content": prompt},
@@ -52,7 +52,15 @@ def ask_gpt(prompt, model=None):
             temperature=config['temperature'],
             max_tokens=config['max_tokens']
         )
-        return response.choices[0].message.content.strip()
+        response_content = response.choices[0].message.content.strip()
+        if format_response:
+            dict_answer, error_msg = parse_and_validate_response(response_content.replace('```json', '').replace('```', '').strip(), LLM_name='gpt')
+            if error_msg:
+                return f"{config['error_prefix']}: {error_msg}"
+            return dict_answer
+        else:
+            return response_content
+            
     except Exception as e:
         return f"{config['error_prefix']}: {e}"
 

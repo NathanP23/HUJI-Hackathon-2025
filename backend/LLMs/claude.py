@@ -2,6 +2,7 @@ import os
 import json
 from anthropic import Anthropic
 from dotenv import load_dotenv
+from .helper import *
 
 # Load environment variables from .env file
 load_dotenv()
@@ -10,7 +11,7 @@ load_dotenv()
 def load_config():
     """Load configuration parameters from JSON file"""
     try:
-        with open('LLMs_config.json', 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), 'LLMs_config.json'), 'r') as f:
             config = json.load(f)
             return config['claude']
     except FileNotFoundError:
@@ -31,7 +32,9 @@ client = Anthropic(
     api_key=os.getenv(config['api_key_env_var'])
 )
 
-def ask_claude(question):
+def ask_claude(question, format_response=True):
+    if format_response:
+        question = format_prompt_for_dict(question, LLM_name='claude')
     """Send a question to Claude and return the response"""
     try:
         message = client.messages.create(
@@ -45,7 +48,16 @@ def ask_claude(question):
                 }
             ]
         )
-        return message.content[0].text
+        response_content = message.content[0].text
+        if format_response:
+            cleaned_response = response_content.replace('```json', '').replace('```', '').strip()
+            dict_answer, error_msg = parse_and_validate_response(cleaned_response, LLM_name='claude')
+            if error_msg:
+                return f"{config['error_prefix']}: {error_msg}"
+            return dict_answer
+        else:
+            return response_content
+    
     except Exception as e:
         return f"{config['error_prefix']}: {str(e)}"
 

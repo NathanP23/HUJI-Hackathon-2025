@@ -5,7 +5,7 @@ from openai import OpenAI
 
 def load_json(path, key=None):
     """Load entire JSON or return sub-key if given."""
-    with open(path, 'r') as f:
+    with open(os.path.join(os.path.dirname(__file__), path), 'r') as f:
         data = json.load(f)
     return data[key] if key else data
 
@@ -60,6 +60,26 @@ def optimize_prompt(original, category, strategy):
     ]
     return ask_llm(messages)
 
+def OptimizeRawPrompt(raw_user_prompt):
+    print(f"Now talking with - Prompt engineer: {config['model']}")
+    print(f"{config['quit_instruction']}")
+    while True:
+        if not raw_user_prompt: continue
+        if raw_user_prompt.lower() in ('exit', 'quit'):
+            break
+
+        category = classify_prompt(raw_user_prompt)
+        print(f"\n[Classification] {category}")
+
+        strategy = select_strategy(category)
+        print(f"[Strategy] {strategy}")
+
+        optimized = optimize_prompt(raw_user_prompt, category, strategy)
+        print("\n🔄 Optimized Prompt:")
+        print(optimized)
+        print("—" * 40)
+        return optimized
+
 def main():
     print(f"Now talking with - Prompt engineer: {config['model']}")
     print(f"{config['quit_instruction']}")
@@ -80,6 +100,7 @@ def main():
         print("\n🔄 Optimized Prompt:")
         print(optimized)
         print("—" * 40)
+        return optimized
 
 if __name__ == "__main__":
     main()

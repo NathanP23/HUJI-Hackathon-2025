@@ -2,6 +2,8 @@ import os
 import json
 import google.generativeai as genai
 from dotenv import load_dotenv
+from .helper import *
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -10,7 +12,7 @@ load_dotenv()
 def load_config():
     """Load configuration parameters from JSON file"""
     try:
-        with open('LLMs_config.json', 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), 'LLMs_config.json'), 'r') as f:
             config = json.load(f)
             return config['gemini']
     except FileNotFoundError:
@@ -38,7 +40,10 @@ if not api_key:
 genai.configure(api_key=api_key)
 model = genai.GenerativeModel(config['model'])
 
-def ask_gemini(prompt):
+def ask_gemini(prompt, format_response=True):
+    if format_response:
+        prompt = format_prompt_for_dict(prompt, LLM_name='gemini')
+    
     """Send a prompt to Gemini and return the response"""
     try:
         response = model.generate_content(
@@ -48,9 +53,20 @@ def ask_gemini(prompt):
                 max_output_tokens=config['max_tokens']
             )
         )
-        return response.text
+        response_content = response.text
+        if format_response:
+            # DEBUG: Print the raw response
+            cleaned_response = response_content.replace('```json', '').replace('```', '').strip()
+            
+            dict_answer, error_msg = parse_and_validate_response(cleaned_response, LLM_name='gemini')
+            if error_msg:
+                return f"{config['error_prefix']}: {error_msg}"
+            return dict_answer
+        else:
+            return response_content
+    
     except Exception as e:
-        return f"{config['error_prefix']}: {e}. {config['error_suggestion']}"
+        return f"{config['error_prefix']}: {e}."
 
 def main():
     print(f"Now talking with: {config['model']}")
@@ -74,11 +90,4 @@ def main():
         print(config['separator'] * config['separator_length'])
 
 if __name__ == "__main__":
-    # Check if interactive mode is enabled
-    if config.get('interactive_mode', True):
-        main()
-    else:
-        # Single question mode
-        question = input(f"{config['single_question_prompt']}: ")
-        answer = ask_gemini(question)
-        print(f"{config['response_prefix']}: {answer}")
+    main()
