@@ -42,11 +42,6 @@ model = genai.GenerativeModel(config['model'])
 
 def ask_gemini(prompt, format_response=True):
     print(f"In ask_gemini with prompt: {prompt}, format_response: {format_response}")
-    # if format_response:
-    #     print(f"    format_response={format_response} --> Formatting prompt for dict: {prompt}")
-    #     prompt = format_prompt_for_dict(prompt, LLM_name='gemini')
-    #     print(f"    Formatted prompt: {prompt}")
-
     """Send a prompt to Gemini and return the response"""
     try:
         if format_response:
@@ -84,7 +79,7 @@ def ask_gemini(prompt, format_response=True):
                 )
             )
 
-            response = model.generate_content("Compare these two models")
+            response = model.generate_content("Compare these two answers and their performance",)
             response_content = json.loads(response.text)
         else:
             response = model.generate_content(
@@ -96,19 +91,6 @@ def ask_gemini(prompt, format_response=True):
             )
             response_content = response.text
         print(f"        Raw response content: {response_content}, type: {type(response_content)}")
-        # if format_response:
-        #     # DEBUG: Print the raw response
-        #     print(f"        format_response={format_response} --> Checking and validating dict: {response_content}")
-        #     cleaned_response = response_content.replace('```json', '').replace('```', '').strip()
-        #     print(f"        Cleaned response: {cleaned_response}")
-        #     dict_answer, error_msg = parse_and_validate_response(cleaned_response, LLM_name='gemini')
-        #     print(f"        Parsed dict: {dict_answer}, Error message: {error_msg}")
-        #     if error_msg:
-        #         return f"{config['error_prefix']}: {error_msg}"
-        #     print(f"        Returning dict answer: {dict_answer}")
-        #     return dict_answer
-        # else:
-        #     return response_content
         return response_content
     except Exception as e:
         return f"{config['error_prefix']}: {e}."

@@ -40,16 +40,12 @@ client = OpenAI(api_key=api_key)
 def ask_gpt(prompt, format_response=True):
     print(f"In ask_gpt with prompt: {prompt}, format_response: {format_response}")
     """Send a prompt to GPT and return the response"""
-    # if format_response:
-    #     print(f"    format_response={format_response} --> Formatting prompt for dict: {prompt}")
-    #     prompt = format_prompt_for_dict(prompt, LLM_name='gpt')
-    #     print(f"    Formatted prompt: {prompt}")
     try:
         if format_response:
             response = client.chat.completions.create(
                 model="gpt-4o",  # Must use gpt-4o or gpt-4o-mini for structured outputs
                 messages=[
-                    {"role": "user", "content": "Compare these two models and their performance"}
+                    {"role": "user", "content": "Provide a structured comparison of answers of those two models"}
                 ],
                 response_format={
                     "type": "json_schema",
@@ -98,17 +94,6 @@ def ask_gpt(prompt, format_response=True):
             )
             response_content = response.choices[0].message.content.strip()
         print(f"        Raw response content: {response_content}, type: {type(response_content)}")
-
-        # if format_response:
-        #     print(f"        format_response={format_response} --> Checking and validating dict: {response_content}")
-        #     dict_answer, error_msg = parse_and_validate_response(response_content.replace('```json', '').replace('```', '').strip(), LLM_name='gpt')
-        #     print(f"        Parsed dict: {dict_answer}, Error message: {error_msg}")
-        #     if error_msg:
-        #         return f"{config['error_prefix']}: {error_msg}"
-        #     print(f"        Returning dict answer: {dict_answer}")
-        #     return dict_answer
-        # else:
-        #     return response_content
         return response_content
     except Exception as e:
         return f"{config['error_prefix']}: {e}"
