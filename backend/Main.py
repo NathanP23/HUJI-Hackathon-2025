@@ -1,5 +1,9 @@
 import re
 from typing import Tuple, Dict
+from LLMs.claude import ask_claude
+from LLMs.gemini import ask_gemini
+from LLMs.gpt import ask_gpt
+from LLMs.helper import *
 
 class MML:
     def __init__(self, name: str):
@@ -17,9 +21,7 @@ class MML:
         "[+[(+(claud<-->Could be clearer)+) (+(gemini<-->Too short)+)]+]"
         "<+<(+(claud<-->Well structured)+) (+(gemini<-->Concise)+)>+>"
     )
-from LLMs.claude import ask_claude
-from LLMs.gemini import ask_gemini
-from LLMs.gpt import ask_gpt
+
 MML_LIST = {
     "gpt": ask_gpt,
     "claude": ask_claude,
@@ -83,7 +85,7 @@ def main():
     improvement = False
     while dept >= 0:
         names = []
-        answers = []
+        answers = {}
         weaknesses = {mml : [] for mml in MML_LIST.keys()}
         strengths = {mml : [] for mml in MML_LIST.keys()}
 
@@ -107,19 +109,20 @@ def main():
                     strengths[key].append(val)
 
             names.append(mml_name)
-            answers.append(answer)
+            answers[mml_name] = answer
 
         names_to_answers = {}
         for name in names:
             names_to_answers[name] = {name : {}}
-            for name2, answer in zip(names, answers):
+            for name2, answer in zip(names, answers.values()):
                 if name2 != name:
                     names_to_answers[name][name2] = answer
 
         jsons = [{"weaknesses" : weaknesses[name],
                   "strengths" : strengths[name],
                   "names to answers" : names_to_answers[name],
-                  "first prompt" : first_prompt} for name, answer in zip(names, answers)]
+                  "old answer" : answers[name],
+                  "original_question" : first_prompt} for name, answer in zip(names, answers)]
         
         print("JSONs:")
         for json in jsons:
@@ -127,7 +130,7 @@ def main():
 
         for mml, json in zip(MML_LIST, jsons):
             # JSON: answer, weakness, strength -> prompt to improve next iteration with new answer
-            cur_prompts[mml.name] = JSON_to_prompt(json)
+            cur_prompts[mml_name] = generate_improvement_prompt(json)
         improvement = True
         dept -= 1
 

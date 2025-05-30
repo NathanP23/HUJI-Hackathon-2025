@@ -4,6 +4,7 @@ from anthropic import Anthropic
 from dotenv import load_dotenv
 from .helper import *
 
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -33,31 +34,79 @@ client = Anthropic(
 )
 
 def ask_claude(question, format_response=True):
-    if format_response:
-        question = format_prompt_for_dict(question, LLM_name='claude')
+    print(f"In ask_claude with prompt: {question}, format_response: {format_response}")
+    # if format_response:
+    #     print(f"    format_response={format_response} --> Formatting prompt for dict: {question}")
+    #     question = format_prompt_for_dict(question, LLM_name='claude')
+    #     print(f"    Formatted prompt: {question}")
+
     """Send a question to Claude and return the response"""
     try:
-        message = client.messages.create(
-            model=config['model'],
-            max_tokens=config['max_tokens'],
-            temperature=config['temperature'],
-            messages=[
-                {
-                    "role": "user",
-                    "content": question
-                }
-            ]
-        )
-        response_content = message.content[0].text
         if format_response:
-            cleaned_response = response_content.replace('```json', '').replace('```', '').strip()
-            dict_answer, error_msg = parse_and_validate_response(cleaned_response, LLM_name='claude')
-            if error_msg:
-                return f"{config['error_prefix']}: {error_msg}"
-            return dict_answer
+            response = client.messages.create(
+                model="claude-3-5-sonnet-20241022",
+                max_tokens=500,
+                tools=[{
+                    "name": "provide_comparison",
+                    "description": "Provide a structured comparison of models",
+                    "input_schema": {
+                        "type": "object",
+                        "properties": {
+                            "answer": {"type": "string"},
+                            "strengths": {
+                                "type": "object",
+                                "properties": {
+                                    "gpt": {"type": "string"},
+                                    "gemini": {"type": "string"}
+                                },
+                                "required": ["gpt", "gemini"]
+                            },
+                            "weaknesses": {
+                                "type": "object",
+                                "properties": {
+                                    "gpt": {"type": "string"},
+                                    "gemini": {"type": "string"}
+                                },
+                                "required": ["gpt", "gemini"]
+                            }
+                        },
+                        "required": ["answer", "strengths", "weaknesses"]
+                    }
+                }],
+                tool_choice={"type": "tool", "name": "provide_comparison"},
+                messages=[
+                    {"role": "user", "content": "Compare these models"}
+                ]
+            )
+            response_content = response.content[0].input
+
         else:
-            return response_content
-    
+            message = client.messages.create(
+                model=config['model'],
+                max_tokens=config['max_tokens'],
+                temperature=config['temperature'],
+                messages=[
+                    {
+                        "role": "user",
+                        "content": question
+                    }
+                ]
+            )
+            response_content = message.content[0].text
+        print(f"        Raw response content: {response_content}, type: {type(response_content)}")
+        # if format_response:
+        #     print(f"        format_response={format_response} --> Checking and validating dict: {response_content}")
+        #     cleaned_response = response_content.replace('```json', '').replace('```', '').strip()
+        #     print(f"        Cleaned response: {cleaned_response}")
+        #     dict_answer, error_msg = parse_and_validate_response(cleaned_response, LLM_name='claude')
+        #     print(f"        Parsed dict: {dict_answer}, Error message: {error_msg}")
+        #     if error_msg:
+        #         return f"{config['error_prefix']}: {error_msg}"
+        #     print(f"        Returning dict answer: {dict_answer}")
+        #     return dict_answer
+        # else:
+        #     return response_content
+        return response_content
     except Exception as e:
         return f"{config['error_prefix']}: {str(e)}"
 

@@ -41,30 +41,75 @@ genai.configure(api_key=api_key)
 model = genai.GenerativeModel(config['model'])
 
 def ask_gemini(prompt, format_response=True):
-    if format_response:
-        prompt = format_prompt_for_dict(prompt, LLM_name='gemini')
-    
+    print(f"In ask_gemini with prompt: {prompt}, format_response: {format_response}")
+    # if format_response:
+    #     print(f"    format_response={format_response} --> Formatting prompt for dict: {prompt}")
+    #     prompt = format_prompt_for_dict(prompt, LLM_name='gemini')
+    #     print(f"    Formatted prompt: {prompt}")
+
     """Send a prompt to Gemini and return the response"""
     try:
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                temperature=config['temperature'],
-                max_output_tokens=config['max_tokens']
-            )
-        )
-        response_content = response.text
         if format_response:
-            # DEBUG: Print the raw response
-            cleaned_response = response_content.replace('```json', '').replace('```', '').strip()
-            
-            dict_answer, error_msg = parse_and_validate_response(cleaned_response, LLM_name='gemini')
-            if error_msg:
-                return f"{config['error_prefix']}: {error_msg}"
-            return dict_answer
+
+            # Define the schema
+            response_schema = {
+                "type": "object",
+                "properties": {
+                    "answer": {"type": "string"},
+                    "strengths": {
+                        "type": "object",
+                        "properties": {
+                            "gpt": {"type": "string"},
+                            "claude": {"type": "string"}
+                        },
+                        "required": ["gpt", "claude"]
+                    },
+                    "weaknesses": {
+                        "type": "object",
+                        "properties": {
+                            "gpt": {"type": "string"},
+                            "claude": {"type": "string"}
+                        },
+                        "required": ["gpt", "claude"]
+                    }
+                },
+                "required": ["answer", "strengths", "weaknesses"]
+            }
+
+            model = genai.GenerativeModel(
+                model_name="gemini-1.5-flash",
+                generation_config=genai.GenerationConfig(
+                    response_mime_type="application/json",
+                    response_schema=response_schema
+                )
+            )
+
+            response = model.generate_content("Compare these two models")
+            response_content = json.loads(response.text)
         else:
-            return response_content
-    
+            response = model.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    temperature=config['temperature'],
+                    max_output_tokens=config['max_tokens']
+                )
+            )
+            response_content = response.text
+        print(f"        Raw response content: {response_content}, type: {type(response_content)}")
+        # if format_response:
+        #     # DEBUG: Print the raw response
+        #     print(f"        format_response={format_response} --> Checking and validating dict: {response_content}")
+        #     cleaned_response = response_content.replace('```json', '').replace('```', '').strip()
+        #     print(f"        Cleaned response: {cleaned_response}")
+        #     dict_answer, error_msg = parse_and_validate_response(cleaned_response, LLM_name='gemini')
+        #     print(f"        Parsed dict: {dict_answer}, Error message: {error_msg}")
+        #     if error_msg:
+        #         return f"{config['error_prefix']}: {error_msg}"
+        #     print(f"        Returning dict answer: {dict_answer}")
+        #     return dict_answer
+        # else:
+        #     return response_content
+        return response_content
     except Exception as e:
         return f"{config['error_prefix']}: {e}."
 
