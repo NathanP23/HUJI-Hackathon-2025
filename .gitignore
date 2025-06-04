@@ -9,6 +9,7 @@
 !backend/**
 !frontend/
 !frontend/**
+!README.md
 !/*.pptx
 
 # Python junk anywhere
