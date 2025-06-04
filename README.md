@@ -1,4 +1,4 @@
-# HUJI Hackathon 2025 Backend
+# HUJI Hackathon 2025 Project
 
 ### Contributors
 
@@ -8,6 +8,12 @@
 * [Tal Schlezinger](https://github.com/Tal-Schhlezinger) – 2nd year B.Sc in CS
 * [Yonatan Zehavi](https://github.com/YonatanZehavi319) – 2nd year B.Sc in CS & Data Science
 * [Noam Azoulay](LINK) – 2nd year B.Sc in CS
+
+This project was developed during the 2025 HUJI Hackathon in under 24 hours. It's a proof of concept (PoC) designed to showcase an AI-driven, full-stack application that integrates multiple LLM APIs (OpenAI, Gemini, Claude) into a real-time backend with a React frontend.
+
+As with many hackathon projects, the current codebase is functional but still rough — the backend needs further refactoring, and the overall system architecture would benefit from more time for polish, testing, and optimization.
+
+The GitHub repository reflects our initial sprint and is intended as a starting point for a more complete application.
 
 ## Prerequisites
 
