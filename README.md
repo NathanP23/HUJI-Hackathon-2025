@@ -1,8 +1,13 @@
 # HUJI Hackathon 2025 Backend
 
-People that coded this repo: [NathanP23](https://github.com/NathanP23)
+People in the group that contributed to the project: 
+[Nathan Pasder](https://www.linkedin.com/in/nathan-p-6038282b0/) (3rd year B.Sc Data Science & CS Minor),
+[shzmr](https://github.com/shzmr) (2nd year B.Sc in CS & Minor in physics),
+[Meital Lubarski](https://github.com/Meital-Lubarski) (2nd year B.Sc in CS),
+[Tal Schlezinger](https://github.com/Tal-Schhlezinger) (2nd year B.Sc in CS),
+[Yonatan Zehavi](https://github.com/YonatanZehavi319) (2nd year B.Sc in CS & Data Science),
+[Noam Azoulay](LINK) (2nd year B.Sc in CS)
 
-The git history of this repository only lists a single author. No other contributors were found in the repository.
 
 ## Prerequisites
 
