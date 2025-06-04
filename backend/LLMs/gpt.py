@@ -43,6 +43,7 @@ def ask_gpt(prompt, format_response=True):
     try:
         if format_response:
             response = client.chat.completions.create(
+                max_tokens=500,
                 model="gpt-4o",  # Must use gpt-4o or gpt-4o-mini for structured outputs
                 messages=[
                     {"role": "user", "content": "Provide a structured comparison of answers of those two models"}

@@ -40,7 +40,7 @@ def ask_claude(question, format_response=True):
         if format_response:
             response = client.messages.create(
                 model="claude-3-5-sonnet-20241022",
-                max_tokens=300,
+                max_tokens=500,
                 tools=[{
                     "name": "provide_comparison",
                     "description": "Provide a structured comparison of answers of those two models",

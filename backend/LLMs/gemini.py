@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from .helper import *
 
 
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -79,9 +80,12 @@ def ask_gemini(prompt, format_response=True):
                 )
             )
 
-            response = model.generate_content("Compare these two answers and their performance",)
+            response = model.generate_content("Compare these two answers and their performance")
             response_content = json.loads(response.text)
         else:
+            model = genai.GenerativeModel(
+                model_name="gemini-1.5-flash",
+            )
             response = model.generate_content(
                 prompt,
                 generation_config=genai.types.GenerationConfig(

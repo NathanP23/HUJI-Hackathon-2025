@@ -1,9 +1,53 @@
-# Ignore everything
+# Ignore everything by default
 *
 
-# Except the .gitignore file itself
+# Allow .gitignore
 !.gitignore
 
-# Except the backend folder and its contents
+# Allow backend and frontend
 !backend/
 !backend/**
+!frontend/
+!frontend/**
+!/*.pptx
+
+# Python junk anywhere
+**/__pycache__/
+**/*.py[cod]
+**/*.pyo
+**/*.pyd
+**/*.pyc
+
+
+# --- Node/React/JS crap ---
+**/node_modules/
+**/build/
+**/dist/
+**/.turbo/
+**/.next/
+**/.cache/
+**/.eslintcache
+**/coverage/
+**/storybook-static/
+
+# --- TypeScript stuff ---
+**/*.tsbuildinfo
+**/*.d.ts
+
+# --- Common temp/config files ---
+**/.env*
+**/npm-debug.log
+**/yarn-error.log
+**/pnpm-lock.yaml
+**/package-lock.json
+
+# --- Misc IDE/editor/project clutter ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# --- OS-generated files ---
+ehthumbs.db
+Icon?
