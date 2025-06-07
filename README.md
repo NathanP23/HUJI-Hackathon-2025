@@ -2,7 +2,7 @@
 
 ### Contributors
 
-* [Nathan Pasder](https://www.linkedin.com/in/nathan-p-6038282b0/) – 3rd year B.Sc Data Science & CS Minor
+* [Nathan Pasder](https://www.linkedin.com/in/nathanp1403/) – 3rd year B.Sc Data Science & CS Minor
 * [shzmr](https://github.com/shzmr) – 2nd year B.Sc in CS & Minor in Physics
 * [Meital Lubarski](https://github.com/Meital-Lubarski) – 2nd year B.Sc in CS
 * [Tal Schlezinger](https://github.com/Tal-Schhlezinger) – 2nd year B.Sc in CS
